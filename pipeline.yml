@@ -1,0 +1,45 @@
+Plan, Apply from Lab through Dev, Test to Prod - You will need to create environments (mentioned in 'environment') below to run the stages (with gate keeping approvals if you want)
+# You can also remove the stages that you do not want to run_once
+
+#################################################
+# Resources
+#################################################
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/repos/multi-repo-checkout
+resources:
+  repositories:
+    - repository: blueprints
+      type: github
+      endpoint: 'Github Service Connection'
+      name: WoolsCORP/AzureDevOps-Blueprints
+      ref: master
+
+#################################################
+# Agent Pool
+#################################################
+
+#################################################
+# Parameters
+#################################################
+parameters:
+  - name: appServices
+    type: object
+    default:
+      - appServiceName: 'pst-dev-azure'
+        approvalEnvName: 'pst-dev-azure'
+        changeEnabled: False
+        SNOW_CHANGE_REQUEST_NUMBER: 'UNKNOWN'
+        
+#################################################
+# Variables
+#################################################
+#variables:
+
+#################################################
+# Stages
+#################################################
+extends:
+  template: templates/stages/tfe/deploy-appsvcs.yml@blueprints
+  parameters:
+    appServices: ${{ parameters.appServices}}
+
+
